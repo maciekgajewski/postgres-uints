@@ -1,0 +1,5 @@
+CREATE EXTENSION uints;
+
+
+DROP EXTENSION uints;
+
