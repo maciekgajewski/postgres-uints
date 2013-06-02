@@ -1,6 +1,6 @@
 
 MODULE_big = uints
-OBJS = uints_io.o
+OBJS = uints_io.o uint.o uint8.o uints_numutils.o
 
 EXTENSION = uints
 DATA = uints--0.9.sql
