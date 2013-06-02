@@ -903,7 +903,7 @@ Datum
 uint4shl(PG_FUNCTION_ARGS)
 {
 	uint32		arg1 = PG_GETARG_UINT32(0);
-	uint32		arg2 = PG_GETARG_UINT32(1);
+	int32		arg2 = PG_GETARG_INT32(1);
 
 	PG_RETURN_UINT32(arg1 << arg2);
 }
@@ -913,7 +913,7 @@ Datum
 uint4shr(PG_FUNCTION_ARGS)
 {
 	uint32		arg1 = PG_GETARG_UINT32(0);
-	uint32		arg2 = PG_GETARG_UINT32(1);
+	int32		arg2 = PG_GETARG_INT32(1);
 
 	PG_RETURN_UINT32(arg1 >> arg2);
 }
@@ -972,7 +972,7 @@ Datum
 uint2shl(PG_FUNCTION_ARGS)
 {
 	uint16		arg1 = PG_GETARG_UINT16(0);
-	uint32		arg2 = PG_GETARG_UINT32(1);
+	int32		arg2 = PG_GETARG_INT32(1);
 
 	PG_RETURN_UINT16(arg1 << arg2);
 }
@@ -982,7 +982,7 @@ Datum
 uint2shr(PG_FUNCTION_ARGS)
 {
 	uint16		arg1 = PG_GETARG_UINT16(0);
-	uint32		arg2 = PG_GETARG_UINT32(1);
+	int32		arg2 = PG_GETARG_INT32(1);
 
 	PG_RETURN_UINT16(arg1 >> arg2);
 }

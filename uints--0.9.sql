@@ -303,15 +303,15 @@ CREATE FUNCTION uint4xor(uint4, uint4) RETURNS uint4
 AS 'MODULE_PATHNAME'
 LANGUAGE C STRICT IMMUTABLE;
 
-CREATE FUNCTION uint4shl(uint4, uint4) RETURNS uint4
+CREATE FUNCTION uint4shl(uint4, int4) RETURNS uint4
 AS 'MODULE_PATHNAME'
 LANGUAGE C STRICT IMMUTABLE;
 
-CREATE FUNCTION uint4shr(uint4, uint4) RETURNS uint4
+CREATE FUNCTION uint4shr(uint4, int4) RETURNS uint4
 AS 'MODULE_PATHNAME'
 LANGUAGE C STRICT IMMUTABLE;
 
-CREATE FUNCTION uint4not(uint4, uint4) RETURNS uint4
+CREATE FUNCTION uint4not(uint4) RETURNS uint4
 AS 'MODULE_PATHNAME'
 LANGUAGE C STRICT IMMUTABLE;
 
@@ -327,15 +327,15 @@ CREATE FUNCTION uint2xor(uint2, uint2) RETURNS uint2
 AS 'MODULE_PATHNAME'
 LANGUAGE C STRICT IMMUTABLE;
 
-CREATE FUNCTION uint2not(uint2, uint2) RETURNS uint2
+CREATE FUNCTION uint2not(uint2) RETURNS uint2
 AS 'MODULE_PATHNAME'
 LANGUAGE C STRICT IMMUTABLE;
 
-CREATE FUNCTION uint2shl(uint2, uint2) RETURNS uint2
+CREATE FUNCTION uint2shl(uint2, int4) RETURNS uint2
 AS 'MODULE_PATHNAME'
 LANGUAGE C STRICT IMMUTABLE;
 
-CREATE FUNCTION uint2shr(uint2, uint2) RETURNS uint2
+CREATE FUNCTION uint2shr(uint2, int4) RETURNS uint2
 AS 'MODULE_PATHNAME'
 LANGUAGE C STRICT IMMUTABLE;
 
@@ -359,12 +359,214 @@ CREATE CAST (int2 AS uint2) WITHOUT FUNCTION;
 CREATE CAST (uint2 AS int2) WITHOUT FUNCTION;
 CREATE CAST (int4 AS uint2) WITH FUNCTION i4tou2(int4);
 
+CREATE OPERATOR + (
+    leftarg = uint2,
+    rightarg = uint2,
+    procedure = uint2pl,
+    commutator = +
+);
+
+CREATE OPERATOR - (
+    leftarg = uint2,
+    rightarg = uint2,
+    procedure = uint2mi
+);
+
+CREATE OPERATOR * (
+    leftarg = uint2,
+    rightarg = uint2,
+    procedure = uint2mul,
+    commutator = *
+);
+
+CREATE OPERATOR / (
+    leftarg = uint2,
+    rightarg = uint2,
+    procedure = uint2div
+);
+
+CREATE OPERATOR % (
+    leftarg = uint2,
+    rightarg = uint2,
+    procedure = uint2mod
+);
+
+CREATE OPERATOR & (
+    leftarg = uint2,
+    rightarg = uint2,
+    procedure = uint2and,
+    commutator = &
+);
+
+CREATE OPERATOR | (
+    leftarg = uint2,
+    rightarg = uint2,
+    procedure = uint2or,
+    commutator = |
+);
+
+CREATE OPERATOR # (
+    leftarg = uint2,
+    rightarg = uint2,
+    procedure = uint2xor,
+    commutator = #
+);
+
+CREATE OPERATOR ~ (
+    rightarg = uint2,
+    procedure = uint2not
+);
+
+CREATE OPERATOR << (
+    rightarg = int4,
+    leftarg = uint2,
+    procedure = uint2shl
+);
+
+CREATE OPERATOR >> (
+    rightarg = int4,
+    leftarg = uint2,
+    procedure = uint2shr
+);
+
+CREATE OPERATOR > (
+    rightarg = uint2,
+    leftarg = uint2,
+    procedure = uint2gt,
+    commutator = <,
+    negator = <=
+);
+
+CREATE OPERATOR < (
+    rightarg = uint2,
+    leftarg = uint2,
+    procedure = uint2lt,
+    commutator = >,
+    negator = >=
+);
+
+CREATE OPERATOR <= (
+    rightarg = uint2,
+    leftarg = uint2,
+    procedure = uint2le,
+    commutator = >=,
+    negator = >
+);
+
+CREATE OPERATOR >= (
+    rightarg = uint2,
+    leftarg = uint2,
+    procedure = uint2ge,
+    commutator = <=,
+    negator = <
+);
 
 -- UINT 4 operators
 
 CREATE CAST (int4 AS uint4) WITHOUT FUNCTION;
 CREATE CAST (uint4 AS int4) WITHOUT FUNCTION;
 
+CREATE OPERATOR + (
+    leftarg = uint4,
+    rightarg = uint4,
+    procedure = uint4pl,
+    commutator = +
+);
+
+CREATE OPERATOR - (
+    leftarg = uint4,
+    rightarg = uint4,
+    procedure = uint4mi
+);
+
+CREATE OPERATOR * (
+    leftarg = uint4,
+    rightarg = uint4,
+    procedure = uint4mul,
+    commutator = *
+);
+
+CREATE OPERATOR / (
+    leftarg = uint4,
+    rightarg = uint4,
+    procedure = uint4div
+);
+
+CREATE OPERATOR % (
+    leftarg = uint4,
+    rightarg = uint4,
+    procedure = uint4mod
+);
+
+CREATE OPERATOR & (
+    leftarg = uint4,
+    rightarg = uint4,
+    procedure = uint4and,
+    commutator = &
+);
+
+CREATE OPERATOR | (
+    leftarg = uint4,
+    rightarg = uint4,
+    procedure = uint4or,
+    commutator = |
+);
+
+CREATE OPERATOR # (
+    leftarg = uint4,
+    rightarg = uint4,
+    procedure = uint4xor,
+    commutator = #
+);
+
+CREATE OPERATOR ~ (
+    rightarg = uint4,
+    procedure = uint4not
+);
+
+CREATE OPERATOR << (
+    rightarg = int4,
+    leftarg = uint4,
+    procedure = uint4shl
+);
+
+CREATE OPERATOR >> (
+    rightarg = int4,
+    leftarg = uint4,
+    procedure = uint4shr
+);
+
+CREATE OPERATOR > (
+    rightarg = uint4,
+    leftarg = uint4,
+    procedure = uint4gt,
+    commutator = <,
+    negator = <=
+);
+
+CREATE OPERATOR < (
+    rightarg = uint4,
+    leftarg = uint4,
+    procedure = uint4lt,
+    commutator = >,
+    negator = >=
+);
+
+CREATE OPERATOR <= (
+    rightarg = uint4,
+    leftarg = uint4,
+    procedure = uint4le,
+    commutator = >=,
+    negator = >
+);
+
+CREATE OPERATOR >= (
+    rightarg = uint4,
+    leftarg = uint4,
+    procedure = uint4ge,
+    commutator = <=,
+    negator = <
+);
 
 -- UINT 2/4 operators
 
