@@ -33,6 +33,7 @@
 #include "libpq/pqformat.h"
 #include "utils/array.h"
 #include "utils/builtins.h"
+#include "access/hash.h"
 
 #include "uints_numutils.h"
 #include "uints_fmgr.h"
@@ -1073,6 +1074,7 @@ generate_series_step_uint4(PG_FUNCTION_ARGS)
 }
 
 /* Comparators */
+
 DECLARE(uint2_cmp)
 Datum
 uint2_cmp(PG_FUNCTION_ARGS)
@@ -1101,4 +1103,23 @@ uint4_cmp(PG_FUNCTION_ARGS)
 		PG_RETURN_INT32(-1);
 	else
 		PG_RETURN_INT32(0);
+}
+
+/* Hashes */
+
+DECLARE(uint4_hash)
+Datum
+uint4_hash(PG_FUNCTION_ARGS)
+{
+	uint32		arg1 = PG_GETARG_UINT32(0);
+	return DatumGetUInt32(hash_uint32(arg1));
+}
+
+DECLARE(uint2_hash)
+Datum
+uint2_hash(PG_FUNCTION_ARGS)
+{
+	uint16		arg1 = PG_GETARG_UINT16(0);
+
+	return DatumGetUInt32(hash_uint32((uint32)arg1));
 }

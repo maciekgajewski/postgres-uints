@@ -763,7 +763,12 @@ CREATE FUNCTION uint2_cmp(uint2, uint2) RETURNS INTEGER
 AS 'MODULE_PATHNAME'
 LANGUAGE C STRICT IMMUTABLE;
 
-CREATE OPERATOR CLASS uint2_ops
+CREATE FUNCTION uint2_hash(uint2) RETURNS INTEGER
+AS 'MODULE_PATHNAME'
+LANGUAGE C STRICT IMMUTABLE;
+
+
+CREATE OPERATOR CLASS uint2_ops_btree
     DEFAULT FOR TYPE uint2 USING btree AS
         OPERATOR        1       < ,
         OPERATOR        2       <= ,
@@ -773,13 +778,22 @@ CREATE OPERATOR CLASS uint2_ops
         FUNCTION        1       uint2_cmp(uint2, uint2);
 
 
+CREATE OPERATOR CLASS uint2_ops_hash
+    DEFAULT FOR TYPE uint2 USING hash AS
+        OPERATOR        1       = ,
+        FUNCTION        1       uint2_hash(uint2);
+
 -- UINT 4 operator classes
 
 CREATE FUNCTION uint4_cmp(uint4, uint4) RETURNS INTEGER
 AS 'MODULE_PATHNAME'
 LANGUAGE C STRICT IMMUTABLE;
 
-CREATE OPERATOR CLASS uint4_ops
+CREATE FUNCTION uint4_hash(uint4) RETURNS INTEGER
+AS 'MODULE_PATHNAME'
+LANGUAGE C STRICT IMMUTABLE;
+
+CREATE OPERATOR CLASS uint4_ops_btree
     DEFAULT FOR TYPE uint4 USING btree AS
         OPERATOR        1       < ,
         OPERATOR        2       <= ,
@@ -787,3 +801,8 @@ CREATE OPERATOR CLASS uint4_ops
         OPERATOR        4       >= ,
         OPERATOR        5       > ,
         FUNCTION        1       uint4_cmp(uint4, uint4);
+
+CREATE OPERATOR CLASS uint4_ops_hash
+    DEFAULT FOR TYPE uint4 USING hash AS
+        OPERATOR        1       = ,
+        FUNCTION        1       uint4_hash(uint4);
