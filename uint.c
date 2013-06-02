@@ -1071,3 +1071,34 @@ generate_series_step_uint4(PG_FUNCTION_ARGS)
 		/* do when there is no more left */
 		SRF_RETURN_DONE(funcctx);
 }
+
+/* Comparators */
+DECLARE(uint2_cmp)
+Datum
+uint2_cmp(PG_FUNCTION_ARGS)
+{
+	uint16		arg1 = PG_GETARG_UINT16(0);
+	uint16		arg2 = PG_GETARG_UINT16(1);
+
+	if (arg1 > arg2)
+		PG_RETURN_INT32(1);
+	else if (arg1 < arg2)
+		PG_RETURN_INT32(-1);
+	else
+		PG_RETURN_INT32(0);
+}
+
+DECLARE(uint4_cmp)
+Datum
+uint4_cmp(PG_FUNCTION_ARGS)
+{
+	uint32		arg1 = PG_GETARG_UINT32(0);
+	uint32		arg2 = PG_GETARG_UINT32(1);
+
+	if (arg1 > arg2)
+		PG_RETURN_INT32(1);
+	else if (arg1 < arg2)
+		PG_RETURN_INT32(-1);
+	else
+		PG_RETURN_INT32(0);
+}

@@ -461,6 +461,22 @@ CREATE OPERATOR >= (
     negator = <
 );
 
+CREATE OPERATOR = (
+    rightarg = uint2,
+    leftarg = uint2,
+    procedure = uint2eq,
+    commutator = =,
+    negator = <>
+);
+
+CREATE OPERATOR <> (
+    rightarg = uint2,
+    leftarg = uint2,
+    procedure = uint2ne,
+    commutator = <>,
+    negator = =
+);
+
 -- UINT 4 operators
 
 CREATE CAST (int4 AS uint4) WITHOUT FUNCTION;
@@ -568,7 +584,206 @@ CREATE OPERATOR >= (
     negator = <
 );
 
+CREATE OPERATOR = (
+    rightarg = uint4,
+    leftarg = uint4,
+    procedure = uint4eq,
+    commutator = =,
+    negator = <>
+);
+
+CREATE OPERATOR <> (
+    rightarg = uint4,
+    leftarg = uint4,
+    procedure = uint4ne,
+    commutator = <>,
+    negator = =
+);
+
 -- UINT 2/4 operators
 
 CREATE CAST (uint2 AS uint4) WITH FUNCTION u2tou4(uint2) AS IMPLICIT;
+
+CREATE OPERATOR > (
+    rightarg = uint4,
+    leftarg = uint2,
+    procedure = uint24gt,
+    commutator = <,
+    negator = <=
+);
+
+CREATE OPERATOR < (
+    rightarg = uint4,
+    leftarg = uint2,
+    procedure = uint24lt,
+    commutator = >,
+    negator = >=
+);
+
+CREATE OPERATOR <= (
+    rightarg = uint4,
+    leftarg = uint2,
+    procedure = uint24le,
+    commutator = >=,
+    negator = >
+);
+
+CREATE OPERATOR >= (
+    rightarg = uint4,
+    leftarg = uint2,
+    procedure = uint24ge,
+    commutator = <=,
+    negator = <
+);
+
+CREATE OPERATOR = (
+    rightarg = uint4,
+    leftarg = uint2,
+    procedure = uint24eq,
+    commutator = =,
+    negator = <>
+);
+
+CREATE OPERATOR <> (
+    rightarg = uint4,
+    leftarg = uint2,
+    procedure = uint24ne,
+    commutator = <>,
+    negator = =
+);
+
+CREATE OPERATOR + (
+    rightarg = uint4,
+    leftarg = uint2,
+    procedure = uint24pl,
+    commutator = +
+);
+
+CREATE OPERATOR - (
+    rightarg = uint4,
+    leftarg = uint2,
+    procedure = uint24mi
+);
+
+CREATE OPERATOR * (
+    rightarg = uint4,
+    leftarg = uint2,
+    procedure = uint24mul,
+    commutator = *
+);
+
+CREATE OPERATOR / (
+    rightarg = uint4,
+    leftarg = uint2,
+    procedure = uint24div
+);
+
+
+-- UINT 4/2 operators
+
 CREATE CAST (uint4 AS uint2) WITH FUNCTION u4tou2(uint4);
+
+CREATE OPERATOR > (
+    rightarg = uint2,
+    leftarg= uint4,
+    procedure = uint42gt,
+    commutator = <,
+    negator = <=
+);
+
+CREATE OPERATOR < (
+    rightarg = uint2,
+    leftarg= uint4,
+    procedure = uint42lt,
+    commutator = >,
+    negator = >=
+);
+
+CREATE OPERATOR <= (
+    rightarg = uint2,
+    leftarg= uint4,
+    procedure = uint42le,
+    commutator = >=,
+    negator = >
+);
+
+CREATE OPERATOR >= (
+    rightarg = uint2,
+    leftarg= uint4,
+    procedure = uint42ge,
+    commutator = <=,
+    negator = <
+);
+
+CREATE OPERATOR = (
+    rightarg = uint2,
+    leftarg= uint4,
+    procedure = uint42eq,
+    commutator = =,
+    negator = <>
+);
+
+CREATE OPERATOR <> (
+    rightarg = uint2,
+    leftarg= uint4,
+    procedure = uint42ne,
+    commutator = <>,
+    negator = =
+);
+
+CREATE OPERATOR + (
+    rightarg = uint2,
+    leftarg= uint4,
+    procedure = uint42pl,
+    commutator = +
+);
+
+CREATE OPERATOR - (
+    rightarg = uint2,
+    leftarg= uint4,
+    procedure = uint42mi
+);
+
+CREATE OPERATOR * (
+    rightarg = uint2,
+    leftarg= uint4,
+    procedure = uint42mul,
+    commutator = *
+);
+
+CREATE OPERATOR / (
+    rightarg = uint2,
+    leftarg= uint4,
+    procedure = uint42div
+);
+
+-- UINT 2 operator classes
+
+CREATE FUNCTION uint2_cmp(uint2, uint2) RETURNS INTEGER
+AS 'MODULE_PATHNAME'
+LANGUAGE C STRICT IMMUTABLE;
+
+CREATE OPERATOR CLASS uint2_ops
+    DEFAULT FOR TYPE uint2 USING btree AS
+        OPERATOR        1       < ,
+        OPERATOR        2       <= ,
+        OPERATOR        3       = ,
+        OPERATOR        4       >= ,
+        OPERATOR        5       > ,
+        FUNCTION        1       uint2_cmp(uint2, uint2);
+
+
+-- UINT 4 operator classes
+
+CREATE FUNCTION uint4_cmp(uint4, uint4) RETURNS INTEGER
+AS 'MODULE_PATHNAME'
+LANGUAGE C STRICT IMMUTABLE;
+
+CREATE OPERATOR CLASS uint4_ops
+    DEFAULT FOR TYPE uint4 USING btree AS
+        OPERATOR        1       < ,
+        OPERATOR        2       <= ,
+        OPERATOR        3       = ,
+        OPERATOR        4       >= ,
+        OPERATOR        5       > ,
+        FUNCTION        1       uint4_cmp(uint4, uint4);
