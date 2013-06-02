@@ -329,6 +329,7 @@ uint2le(PG_FUNCTION_ARGS)
 	PG_RETURN_BOOL(arg1 <= arg2);
 }
 
+DECLARE(uint2gt)
 Datum
 uint2gt(PG_FUNCTION_ARGS)
 {
@@ -338,6 +339,7 @@ uint2gt(PG_FUNCTION_ARGS)
 	PG_RETURN_BOOL(arg1 > arg2);
 }
 
+DECLARE(uint2ge)
 Datum
 uint2ge(PG_FUNCTION_ARGS)
 {
@@ -347,6 +349,7 @@ uint2ge(PG_FUNCTION_ARGS)
 	PG_RETURN_BOOL(arg1 >= arg2);
 }
 
+DECLARE(uint24eq)
 Datum
 uint24eq(PG_FUNCTION_ARGS)
 {
@@ -356,6 +359,7 @@ uint24eq(PG_FUNCTION_ARGS)
 	PG_RETURN_BOOL(arg1 == arg2);
 }
 
+DECLARE(uint24ne)
 Datum
 uint24ne(PG_FUNCTION_ARGS)
 {
@@ -365,6 +369,7 @@ uint24ne(PG_FUNCTION_ARGS)
 	PG_RETURN_BOOL(arg1 != arg2);
 }
 
+DECLARE(uint24lt)
 Datum
 uint24lt(PG_FUNCTION_ARGS)
 {
@@ -374,6 +379,7 @@ uint24lt(PG_FUNCTION_ARGS)
 	PG_RETURN_BOOL(arg1 < arg2);
 }
 
+DECLARE(uint24le)
 Datum
 uint24le(PG_FUNCTION_ARGS)
 {
@@ -383,6 +389,7 @@ uint24le(PG_FUNCTION_ARGS)
 	PG_RETURN_BOOL(arg1 <= arg2);
 }
 
+DECLARE(uint24gt)
 Datum
 uint24gt(PG_FUNCTION_ARGS)
 {
@@ -392,6 +399,7 @@ uint24gt(PG_FUNCTION_ARGS)
 	PG_RETURN_BOOL(arg1 > arg2);
 }
 
+DECLARE(uint24ge)
 Datum
 uint24ge(PG_FUNCTION_ARGS)
 {
@@ -401,6 +409,7 @@ uint24ge(PG_FUNCTION_ARGS)
 	PG_RETURN_BOOL(arg1 >= arg2);
 }
 
+DECLARE(uint42eq)
 Datum
 uint42eq(PG_FUNCTION_ARGS)
 {
@@ -410,6 +419,7 @@ uint42eq(PG_FUNCTION_ARGS)
 	PG_RETURN_BOOL(arg1 == arg2);
 }
 
+DECLARE(uint42ne)
 Datum
 uint42ne(PG_FUNCTION_ARGS)
 {
@@ -419,6 +429,7 @@ uint42ne(PG_FUNCTION_ARGS)
 	PG_RETURN_BOOL(arg1 != arg2);
 }
 
+DECLARE(uint42lt)
 Datum
 uint42lt(PG_FUNCTION_ARGS)
 {
@@ -428,6 +439,7 @@ uint42lt(PG_FUNCTION_ARGS)
 	PG_RETURN_BOOL(arg1 < arg2);
 }
 
+DECLARE(uint42le)
 Datum
 uint42le(PG_FUNCTION_ARGS)
 {
@@ -437,6 +449,7 @@ uint42le(PG_FUNCTION_ARGS)
 	PG_RETURN_BOOL(arg1 <= arg2);
 }
 
+DECLARE(uint42gt)
 Datum
 uint42gt(PG_FUNCTION_ARGS)
 {
@@ -446,6 +459,7 @@ uint42gt(PG_FUNCTION_ARGS)
 	PG_RETURN_BOOL(arg1 > arg2);
 }
 
+DECLARE(uint42ge)
 Datum
 uint42ge(PG_FUNCTION_ARGS)
 {
@@ -456,20 +470,11 @@ uint42ge(PG_FUNCTION_ARGS)
 }
 
 /*
- *		int[24]pl		- returns arg1 + arg2
- *		int[24]mi		- returns arg1 - arg2
- *		int[24]mul		- returns arg1 * arg2
- *		int[24]div		- returns arg1 / arg2
+ *		uint[24]pl		- returns arg1 + arg2
+ *		uint[24]mi		- returns arg1 - arg2
+ *		uint[24]mul		- returns arg1 * arg2
+ *		uint[24]div		- returns arg1 / arg2
  */
-
-/* TODO: is this needed for unsgined int? */
-Datum
-uint4up(PG_FUNCTION_ARGS)
-{
-	uint32		arg = PG_GETARG_UINT32(0);
-
-	PG_RETURN_UINT32(arg);
-}
 
 static inline
 void
@@ -480,6 +485,16 @@ report_out_of_range()
 			 errmsg("integer out of range")));
 }
 
+static inline
+void
+report_division_by_zero()
+{
+	ereport(ERROR,
+			(errcode(ERRCODE_DIVISION_BY_ZERO),
+			 errmsg("division by zero")));
+}
+
+DECLARE(uint4pl)
 Datum
 uint4pl(PG_FUNCTION_ARGS)
 {
@@ -493,12 +508,12 @@ uint4pl(PG_FUNCTION_ARGS)
 	PG_RETURN_UINT32(arg1 + arg2);
 }
 
+DECLARE(uint4mi)
 Datum
 uint4mi(PG_FUNCTION_ARGS)
 {
 	uint32		arg1 = PG_GETARG_UINT32(0);
 	uint32		arg2 = PG_GETARG_UINT32(1);
-	uint32		result;
 
 	/* Overflow check */
 	if (arg2 > arg1)
@@ -507,19 +522,24 @@ uint4mi(PG_FUNCTION_ARGS)
 	PG_RETURN_UINT32(arg1 - arg2);
 }
 
+DECLARE(uint4mul)
 Datum
-int4mul(PG_FUNCTION_ARGS)
+uint4mul(PG_FUNCTION_ARGS)
 {
 	uint32		arg1 = PG_GETARG_UINT32(0);
 	uint32		arg2 = PG_GETARG_UINT32(1);
+	uint32		result;
+
+	result = arg1 * arg2;
 
 	/* Overflow check */
-	if (arg1 > USHRT_MAX && arg2 > USHRT_MAX)
+	if (arg1 > USHRT_MAX && arg2 > USHRT_MAX && result / arg1 != arg2)
 		report_out_of_range();
 
-	PG_RETURN_UINT32(arg1 * arg2);
+	PG_RETURN_UINT32(result);
 }
 
+DECLARE(uint4div)
 Datum
 uint4div(PG_FUNCTION_ARGS)
 {
@@ -527,17 +547,14 @@ uint4div(PG_FUNCTION_ARGS)
 	uint32		arg2 = PG_GETARG_UINT32(1);
 
 	if (arg2 == 0)
-	{
-		ereport(ERROR,
-				(errcode(ERRCODE_DIVISION_BY_ZERO),
-				 errmsg("division by zero")));
-	}
+		report_division_by_zero();
 
 	/* No overflow is possible */
 
 	PG_RETURN_UINT32(arg1 / arg2);
 }
 
+DECLARE(uint4inc)
 Datum
 uint4inc(PG_FUNCTION_ARGS)
 {
@@ -550,12 +567,12 @@ uint4inc(PG_FUNCTION_ARGS)
 	PG_RETURN_UINT32(arg + 1);
 }
 
+DECLARE(uint2pl)
 Datum
 uint2pl(PG_FUNCTION_ARGS)
 {
 	uint16		arg1 = PG_GETARG_UINT16(0);
 	uint16		arg2 = PG_GETARG_UINT16(1);
-	uint16		result;
 
 	/* Overflow check */
 	if (arg1 > USHRT_MAX - arg2)
@@ -563,6 +580,7 @@ uint2pl(PG_FUNCTION_ARGS)
 	PG_RETURN_UINT16(arg1 + arg2);
 }
 
+DECLARE(uint2mi)
 Datum
 uint2mi(PG_FUNCTION_ARGS)
 {
@@ -576,6 +594,7 @@ uint2mi(PG_FUNCTION_ARGS)
 	PG_RETURN_UINT16(arg1 - arg2);
 }
 
+DECLARE(uint2mul)
 Datum
 uint2mul(PG_FUNCTION_ARGS)
 {
@@ -590,6 +609,7 @@ uint2mul(PG_FUNCTION_ARGS)
 
 }
 
+DECLARE(uint2div)
 Datum
 uint2div(PG_FUNCTION_ARGS)
 {
@@ -597,60 +617,40 @@ uint2div(PG_FUNCTION_ARGS)
 	uint16		arg2 = PG_GETARG_UINT16(1);
 
 	if (arg2 == 0)
-	{
-		ereport(ERROR,
-				(errcode(ERRCODE_DIVISION_BY_ZERO),
-				 errmsg("division by zero")));
-		/* ensure compiler realizes we mustn't reach the division (gcc bug) */
-		PG_RETURN_NULL();
-	}
+		report_division_by_zero();
 
 
 	/* No overflow is possible */
 	PG_RETURN_UINT16(arg1 / arg2);
 }
 
+DECLARE(uint24pl)
 Datum
 uint24pl(PG_FUNCTION_ARGS)
 {
 	uint16		arg1 = PG_GETARG_UINT16(0);
 	uint32		arg2 = PG_GETARG_UINT32(1);
-	uint32		result;
 
 	/* Overflow check */
 	if (arg2 > UINT_MAX - arg1)
 		report_out_of_range();
 
-	result = arg1 + arg2;
-
 	PG_RETURN_UINT32(arg1 + arg2);
 }
 
-/* TODO */
-
+DECLARE(uint24mi)
 Datum
-int24mi(PG_FUNCTION_ARGS)
+uint24mi(PG_FUNCTION_ARGS)
 {
 	uint16		arg1 = PG_GETARG_UINT16(0);
 	uint32		arg2 = PG_GETARG_UINT32(1);
-	uint32		result;
 
-	result = arg1 - arg2;
-
-	/*
-	 * Overflow check.	If the inputs are of the same sign then their
-	 * difference cannot overflow.	If they are of different signs then the
-	 * result should be of the same sign as the first input.
-	 */
-	if (!SAMESIGN(arg1, arg2) && !SAMESIGN(result, arg1))
-		ereport(ERROR,
-				(errcode(ERRCODE_NUMERIC_VALUE_OUT_OF_RANGE),
-				 errmsg("integer out of range")));
-	PG_RETURN_UINT32(result);
+	PG_RETURN_UINT32(arg1 - arg2);
 }
 
+DECLARE(uint24mul)
 Datum
-int24mul(PG_FUNCTION_ARGS)
+uint24mul(PG_FUNCTION_ARGS)
 {
 	uint16		arg1 = PG_GETARG_UINT16(0);
 	uint32		arg2 = PG_GETARG_UINT32(1);
@@ -668,77 +668,55 @@ int24mul(PG_FUNCTION_ARGS)
 	 * the buck seems to be to check whether both inputs are in the uint16
 	 * range; if so, no overflow is possible.
 	 */
-	if (!(arg2 >= (uint32) SHRT_MIN && arg2 <= (uint32) SHRT_MAX) &&
-		result / arg2 != arg1)
-		ereport(ERROR,
-				(errcode(ERRCODE_NUMERIC_VALUE_OUT_OF_RANGE),
-				 errmsg("integer out of range")));
+	if (arg2 > (uint32) USHRT_MAX && result / arg2 != arg1)
+		report_out_of_range();
+
 	PG_RETURN_UINT32(result);
 }
 
+DECLARE(uint24div)
 Datum
-int24div(PG_FUNCTION_ARGS)
+uint24div(PG_FUNCTION_ARGS)
 {
 	uint16		arg1 = PG_GETARG_UINT16(0);
 	uint32		arg2 = PG_GETARG_UINT32(1);
 
 	if (arg2 == 0)
-	{
-		ereport(ERROR,
-				(errcode(ERRCODE_DIVISION_BY_ZERO),
-				 errmsg("division by zero")));
-		/* ensure compiler realizes we mustn't reach the division (gcc bug) */
-		PG_RETURN_NULL();
-	}
+		report_division_by_zero();
 
 	/* No overflow is possible */
 	PG_RETURN_UINT32((uint32) arg1 / arg2);
 }
 
+DECLARE(uint42pl)
 Datum
-int42pl(PG_FUNCTION_ARGS)
+uint42pl(PG_FUNCTION_ARGS)
 {
 	uint32		arg1 = PG_GETARG_UINT32(0);
 	uint16		arg2 = PG_GETARG_UINT16(1);
-	uint32		result;
 
-	result = arg1 + arg2;
+	if (arg1 > UINT_MAX - arg2)
+		report_out_of_range();
 
-	/*
-	 * Overflow check.	If the inputs are of different signs then their sum
-	 * cannot overflow.  If the inputs are of the same sign, their sum had
-	 * better be that sign too.
-	 */
-	if (SAMESIGN(arg1, arg2) && !SAMESIGN(result, arg1))
-		ereport(ERROR,
-				(errcode(ERRCODE_NUMERIC_VALUE_OUT_OF_RANGE),
-				 errmsg("integer out of range")));
-	PG_RETURN_UINT32(result);
+	PG_RETURN_UINT32(arg1 + arg2);
 }
 
+DECLARE(uint42mi)
 Datum
-int42mi(PG_FUNCTION_ARGS)
+uint42mi(PG_FUNCTION_ARGS)
 {
 	uint32		arg1 = PG_GETARG_UINT32(0);
 	uint16		arg2 = PG_GETARG_UINT16(1);
-	uint32		result;
 
-	result = arg1 - arg2;
+	if (arg2 > arg1)
+		report_out_of_range();
 
-	/*
-	 * Overflow check.	If the inputs are of the same sign then their
-	 * difference cannot overflow.	If they are of different signs then the
-	 * result should be of the same sign as the first input.
-	 */
-	if (!SAMESIGN(arg1, arg2) && !SAMESIGN(result, arg1))
-		ereport(ERROR,
-				(errcode(ERRCODE_NUMERIC_VALUE_OUT_OF_RANGE),
-				 errmsg("integer out of range")));
-	PG_RETURN_UINT32(result);
+	PG_RETURN_UINT32(arg1 - arg2);
 }
 
+DECLARE(uint42mul)
 Datum
-int42mul(PG_FUNCTION_ARGS)
+uint42mul(PG_FUNCTION_ARGS)
 {
 	uint32		arg1 = PG_GETARG_UINT32(0);
 	uint16		arg2 = PG_GETARG_UINT16(1);
@@ -756,84 +734,43 @@ int42mul(PG_FUNCTION_ARGS)
 	 * the buck seems to be to check whether both inputs are in the uint16
 	 * range; if so, no overflow is possible.
 	 */
-	if (!(arg1 >= (uint32) SHRT_MIN && arg1 <= (uint32) SHRT_MAX) &&
-		result / arg1 != arg2)
-		ereport(ERROR,
-				(errcode(ERRCODE_NUMERIC_VALUE_OUT_OF_RANGE),
-				 errmsg("integer out of range")));
+	if (arg1 >= (uint32) USHRT_MAX && result / arg1 != arg2)
+		report_out_of_range();
+
 	PG_RETURN_UINT32(result);
 }
 
+DECLARE(uint42div)
 Datum
-int42div(PG_FUNCTION_ARGS)
+uint42div(PG_FUNCTION_ARGS)
 {
 	uint32		arg1 = PG_GETARG_UINT32(0);
 	uint16		arg2 = PG_GETARG_UINT16(1);
-	uint32		result;
 
 	if (arg2 == 0)
-	{
-		ereport(ERROR,
-				(errcode(ERRCODE_DIVISION_BY_ZERO),
-				 errmsg("division by zero")));
-		/* ensure compiler realizes we mustn't reach the division (gcc bug) */
-		PG_RETURN_NULL();
-	}
+		report_division_by_zero();
 
-	/*
-	 * INT_MIN / -1 is problematic, since the result can't be represented on a
-	 * two's-complement machine.  Some machines produce INT_MIN, some produce
-	 * zero, some throw an exception.  We can dodge the problem by recognizing
-	 * that division by -1 is the same as negation.
-	 */
-	if (arg2 == -1)
-	{
-		result = -arg1;
-		/* overflow check (needed for INT_MIN) */
-		if (arg1 != 0 && SAMESIGN(result, arg1))
-			ereport(ERROR,
-					(errcode(ERRCODE_NUMERIC_VALUE_OUT_OF_RANGE),
-					 errmsg("integer out of range")));
-		PG_RETURN_UINT32(result);
-	}
-
-	/* No overflow is possible */
-
-	result = arg1 / arg2;
-
-	PG_RETURN_UINT32(result);
+	PG_RETURN_UINT32(arg1 / arg2);
 }
 
+DECLARE(uint4mod)
 Datum
-int4mod(PG_FUNCTION_ARGS)
+uint4mod(PG_FUNCTION_ARGS)
 {
 	uint32		arg1 = PG_GETARG_UINT32(0);
 	uint32		arg2 = PG_GETARG_UINT32(1);
 
 	if (arg2 == 0)
-	{
-		ereport(ERROR,
-				(errcode(ERRCODE_DIVISION_BY_ZERO),
-				 errmsg("division by zero")));
-		/* ensure compiler realizes we mustn't reach the division (gcc bug) */
-		PG_RETURN_NULL();
-	}
-
-	/*
-	 * Some machines throw a floating-point exception for INT_MIN % -1, which
-	 * is a bit silly since the correct answer is perfectly well-defined,
-	 * namely zero.
-	 */
-	if (arg2 == -1)
-		PG_RETURN_UINT32(0);
+		report_division_by_zero();
 
 	/* No overflow is possible */
 
 	PG_RETURN_UINT32(arg1 % arg2);
 }
 
+DECLARE(uint2mod)
 Datum
-int2mod(PG_FUNCTION_ARGS)
+uint2mod(PG_FUNCTION_ARGS)
 {
 	uint16		arg1 = PG_GETARG_UINT16(0);
 	uint16		arg2 = PG_GETARG_UINT16(1);
@@ -861,42 +798,9 @@ int2mod(PG_FUNCTION_ARGS)
 	PG_RETURN_UINT16(arg1 % arg2);
 }
 
-
-/* int[24]abs()
- * Absolute value
- */
+DECLARE(uint2larger)
 Datum
-int4abs(PG_FUNCTION_ARGS)
-{
-	uint32		arg1 = PG_GETARG_UINT32(0);
-	uint32		result;
-
-	result = (arg1 < 0) ? -arg1 : arg1;
-	/* overflow check (needed for INT_MIN) */
-	if (result < 0)
-		ereport(ERROR,
-				(errcode(ERRCODE_NUMERIC_VALUE_OUT_OF_RANGE),
-				 errmsg("integer out of range")));
-	PG_RETURN_UINT32(result);
-}
-
-Datum
-int2abs(PG_FUNCTION_ARGS)
-{
-	uint16		arg1 = PG_GETARG_UINT16(0);
-	uint16		result;
-
-	result = (arg1 < 0) ? -arg1 : arg1;
-	/* overflow check (needed for SHRT_MIN) */
-	if (result < 0)
-		ereport(ERROR,
-				(errcode(ERRCODE_NUMERIC_VALUE_OUT_OF_RANGE),
-				 errmsg("smallint out of range")));
-	PG_RETURN_UINT16(result);
-}
-
-Datum
-int2larger(PG_FUNCTION_ARGS)
+uint2larger(PG_FUNCTION_ARGS)
 {
 	uint16		arg1 = PG_GETARG_UINT16(0);
 	uint16		arg2 = PG_GETARG_UINT16(1);
@@ -904,8 +808,9 @@ int2larger(PG_FUNCTION_ARGS)
 	PG_RETURN_UINT16((arg1 > arg2) ? arg1 : arg2);
 }
 
+DECLARE(uint2smaller)
 Datum
-int2smaller(PG_FUNCTION_ARGS)
+uint2smaller(PG_FUNCTION_ARGS)
 {
 	uint16		arg1 = PG_GETARG_UINT16(0);
 	uint16		arg2 = PG_GETARG_UINT16(1);
@@ -913,8 +818,9 @@ int2smaller(PG_FUNCTION_ARGS)
 	PG_RETURN_UINT16((arg1 < arg2) ? arg1 : arg2);
 }
 
+DECLARE(uint4larger)
 Datum
-int4larger(PG_FUNCTION_ARGS)
+uint4larger(PG_FUNCTION_ARGS)
 {
 	uint32		arg1 = PG_GETARG_UINT32(0);
 	uint32		arg2 = PG_GETARG_UINT32(1);
@@ -922,8 +828,9 @@ int4larger(PG_FUNCTION_ARGS)
 	PG_RETURN_UINT32((arg1 > arg2) ? arg1 : arg2);
 }
 
+DECLARE(uint4smaller)
 Datum
-int4smaller(PG_FUNCTION_ARGS)
+uint4smaller(PG_FUNCTION_ARGS)
 {
 	uint32		arg1 = PG_GETARG_UINT32(0);
 	uint32		arg2 = PG_GETARG_UINT32(1);
@@ -942,8 +849,9 @@ int4smaller(PG_FUNCTION_ARGS)
  *		int[24]shr		- returns arg1 >> arg2
  */
 
+DECLARE(uint4and)
 Datum
-int4and(PG_FUNCTION_ARGS)
+uint4and(PG_FUNCTION_ARGS)
 {
 	uint32		arg1 = PG_GETARG_UINT32(0);
 	uint32		arg2 = PG_GETARG_UINT32(1);
@@ -951,8 +859,9 @@ int4and(PG_FUNCTION_ARGS)
 	PG_RETURN_UINT32(arg1 & arg2);
 }
 
+DECLARE(uint4or)
 Datum
-int4or(PG_FUNCTION_ARGS)
+uint4or(PG_FUNCTION_ARGS)
 {
 	uint32		arg1 = PG_GETARG_UINT32(0);
 	uint32		arg2 = PG_GETARG_UINT32(1);
@@ -960,8 +869,9 @@ int4or(PG_FUNCTION_ARGS)
 	PG_RETURN_UINT32(arg1 | arg2);
 }
 
+DECLARE(uint4xor)
 Datum
-int4xor(PG_FUNCTION_ARGS)
+uint4xor(PG_FUNCTION_ARGS)
 {
 	uint32		arg1 = PG_GETARG_UINT32(0);
 	uint32		arg2 = PG_GETARG_UINT32(1);
@@ -969,8 +879,9 @@ int4xor(PG_FUNCTION_ARGS)
 	PG_RETURN_UINT32(arg1 ^ arg2);
 }
 
+DECLARE(uint4shl)
 Datum
-int4shl(PG_FUNCTION_ARGS)
+uint4shl(PG_FUNCTION_ARGS)
 {
 	uint32		arg1 = PG_GETARG_UINT32(0);
 	uint32		arg2 = PG_GETARG_UINT32(1);
@@ -978,8 +889,9 @@ int4shl(PG_FUNCTION_ARGS)
 	PG_RETURN_UINT32(arg1 << arg2);
 }
 
+DECLARE(uint4shr)
 Datum
-int4shr(PG_FUNCTION_ARGS)
+uint4shr(PG_FUNCTION_ARGS)
 {
 	uint32		arg1 = PG_GETARG_UINT32(0);
 	uint32		arg2 = PG_GETARG_UINT32(1);
@@ -987,16 +899,18 @@ int4shr(PG_FUNCTION_ARGS)
 	PG_RETURN_UINT32(arg1 >> arg2);
 }
 
+DECLARE(uint4not)
 Datum
-int4not(PG_FUNCTION_ARGS)
+uint4not(PG_FUNCTION_ARGS)
 {
 	uint32		arg1 = PG_GETARG_UINT32(0);
 
 	PG_RETURN_UINT32(~arg1);
 }
 
+DECLARE(uint2and)
 Datum
-int2and(PG_FUNCTION_ARGS)
+uint2and(PG_FUNCTION_ARGS)
 {
 	uint16		arg1 = PG_GETARG_UINT16(0);
 	uint16		arg2 = PG_GETARG_UINT16(1);
@@ -1004,8 +918,9 @@ int2and(PG_FUNCTION_ARGS)
 	PG_RETURN_UINT16(arg1 & arg2);
 }
 
+DECLARE(uint2or)
 Datum
-int2or(PG_FUNCTION_ARGS)
+uint2or(PG_FUNCTION_ARGS)
 {
 	uint16		arg1 = PG_GETARG_UINT16(0);
 	uint16		arg2 = PG_GETARG_UINT16(1);
@@ -1013,8 +928,9 @@ int2or(PG_FUNCTION_ARGS)
 	PG_RETURN_UINT16(arg1 | arg2);
 }
 
+DECLARE(uint2xor)
 Datum
-int2xor(PG_FUNCTION_ARGS)
+uint2xor(PG_FUNCTION_ARGS)
 {
 	uint16		arg1 = PG_GETARG_UINT16(0);
 	uint16		arg2 = PG_GETARG_UINT16(1);
@@ -1022,8 +938,9 @@ int2xor(PG_FUNCTION_ARGS)
 	PG_RETURN_UINT16(arg1 ^ arg2);
 }
 
+DECLARE(uint2not)
 Datum
-int2not(PG_FUNCTION_ARGS)
+uint2not(PG_FUNCTION_ARGS)
 {
 	uint16		arg1 = PG_GETARG_UINT16(0);
 
@@ -1031,8 +948,9 @@ int2not(PG_FUNCTION_ARGS)
 }
 
 
+DECLARE(uint2shl)
 Datum
-int2shl(PG_FUNCTION_ARGS)
+uint2shl(PG_FUNCTION_ARGS)
 {
 	uint16		arg1 = PG_GETARG_UINT16(0);
 	uint32		arg2 = PG_GETARG_UINT32(1);
@@ -1040,8 +958,9 @@ int2shl(PG_FUNCTION_ARGS)
 	PG_RETURN_UINT16(arg1 << arg2);
 }
 
+DECLARE(uint2shr)
 Datum
-int2shr(PG_FUNCTION_ARGS)
+uint2shr(PG_FUNCTION_ARGS)
 {
 	uint16		arg1 = PG_GETARG_UINT16(0);
 	uint32		arg2 = PG_GETARG_UINT32(1);
@@ -1052,14 +971,17 @@ int2shr(PG_FUNCTION_ARGS)
 /*
  * non-persistent numeric series generator
  */
+DECLARE(generate_series_uint4)
+DECLARE(generate_series_step_uint4)
+
 Datum
-generate_series_int4(PG_FUNCTION_ARGS)
+generate_series_uint4(PG_FUNCTION_ARGS)
 {
-	return generate_series_step_int4(fcinfo);
+	return generate_series_step_uint4(fcinfo);
 }
 
 Datum
-generate_series_step_int4(PG_FUNCTION_ARGS)
+generate_series_step_uint4(PG_FUNCTION_ARGS)
 {
 	FuncCallContext *funcctx;
 	generate_series_fctx *fctx;
@@ -1071,11 +993,11 @@ generate_series_step_int4(PG_FUNCTION_ARGS)
 	{
 		uint32		start = PG_GETARG_UINT32(0);
 		uint32		finish = PG_GETARG_UINT32(1);
-		uint32		step = 1;
+		int32		step = 1;
 
 		/* see if we were given an explicit step size */
 		if (PG_NARGS() == 3)
-			step = PG_GETARG_UINT32(2);
+			step = PG_GETARG_INT32(2);
 		if (step == 0)
 			ereport(ERROR,
 					(errcode(ERRCODE_INVALID_PARAMETER_VALUE),
@@ -1120,11 +1042,11 @@ generate_series_step_int4(PG_FUNCTION_ARGS)
 		fctx->current += fctx->step;
 
 		/* if next-value computation overflows, this is the final result */
-		if (SAMESIGN(result, fctx->step) && !SAMESIGN(result, fctx->current))
+		if ( (fctx->step > 0 && result > fctx->current) || (fctx->step < 0 && result < fctx->current))
 			fctx->step = 0;
 
 		/* do when there is more left to send */
-		SRF_RETURN_NEXT(funcctx, Int32GetDatum(result));
+		SRF_RETURN_NEXT(funcctx, UInt32GetDatum(result));
 	}
 	else
 		/* do when there is no more left */
