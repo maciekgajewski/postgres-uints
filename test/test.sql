@@ -1,5 +1,12 @@
 CREATE EXTENSION uints;
 
+CREATE TABLE t1 (
+    c2 UINT2 NOT NULL,
+    c4 UINT4 NOT NULL
+);
+
+INSERT INTO t1 VALUES (0, 0), (1, 1);
+SELECT * from t1;
 
 DROP EXTENSION uints;
 

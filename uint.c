@@ -214,6 +214,22 @@ bool_uint4(PG_FUNCTION_ARGS)
 		PG_RETURN_UINT32(1);
 }
 
+/* Cast int4 -> uint2 */
+DECLARE(i4tou2)
+Datum
+i4tou2(PG_FUNCTION_ARGS)
+{
+	int32		arg1 = PG_GETARG_INT32(0);
+
+	if (arg1 < 0 || arg1 > USHRT_MAX)
+		ereport(ERROR,
+			(errcode(ERRCODE_NUMERIC_VALUE_OUT_OF_RANGE),
+			errmsg("value %d is out of range for type uint2", arg1)));
+
+	PG_RETURN_UINT16((uint16)arg1);
+
+}
+
 /*
  *		============================
  *		COMPARISON OPERATOR ROUTINES
