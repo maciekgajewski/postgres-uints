@@ -16,5 +16,8 @@
 /* Macros for returning results */
 
 #define PG_RETURN_UINT16(x)	 return UInt16GetDatum(x)
+#define PG_RETURN_UINT64(x)  return Int64GetDatum((int64_t)x)
+
+#define PG_GETARG_UINT64(x)  (uint64)(PG_GETARG_INT64(x))
 
 #endif

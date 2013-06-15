@@ -1,7 +1,7 @@
 /*-------------------------------------------------------------------------
  *
- * int.c
- *	  Functions for the built-in integer types (except int8).
+ * uint.c
+ *	  Functions for uint types
  *
  * Portions Copyright (c) 1996-2013, PostgreSQL Global Development Group
  * Portions Copyright (c) 1994, Regents of the University of California
@@ -38,6 +38,7 @@
 #include "uints_numutils.h"
 #include "uints_fmgr.h"
 
+#include "declare.h"
 
 #define SAMESIGN(a,b)	(((a) < 0) == ((b) < 0))
 
@@ -49,9 +50,6 @@ typedef struct
 } generate_series_fctx;
 
 
-#define DECLARE(fun) \
-	PG_FUNCTION_INFO_V1(fun);\
-	Datum fun(PG_FUNCTION_ARGS);
 
 /*****************************************************************************
  *	 USER I/O ROUTINES														 *
@@ -493,23 +491,6 @@ uint42ge(PG_FUNCTION_ARGS)
  *		uint[24]div		- returns arg1 / arg2
  */
 
-static inline
-void
-report_out_of_range()
-{
-	ereport(ERROR,
-			(errcode(ERRCODE_NUMERIC_VALUE_OUT_OF_RANGE),
-			 errmsg("integer out of range")));
-}
-
-static inline
-void
-report_division_by_zero()
-{
-	ereport(ERROR,
-			(errcode(ERRCODE_DIVISION_BY_ZERO),
-			 errmsg("division by zero")));
-}
 
 DECLARE(uint4pl)
 Datum

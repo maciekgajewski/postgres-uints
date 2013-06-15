@@ -10,3 +10,4 @@ uints_fmgr.h
 uints_io.c
 uints_numutils.c
 uints_numutils.h
+declare.h
